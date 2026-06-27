@@ -1,0 +1,292 @@
+/* ===== リセット & ベース ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --primary: #4f8ef7;
+  --primary-dark: #2e6de0;
+  --danger: #f25f5c;
+  --success: #3cb371;
+  --warning: #f4a261;
+  --text: #1e293b;
+  --text-sub: #64748b;
+  --border: #e2e8f0;
+  --radius: 14px;
+  --shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+
+body {
+  font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 48px;
+}
+
+/* ===== ヘッダー ===== */
+header {
+  background: var(--primary);
+  padding: 0 24px;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(79,142,247,.3);
+}
+.header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.logo { font-size: 1.15rem; font-weight: 700; color: #fff; flex: 1; }
+.date-nav { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 600; font-size: .95rem; }
+.icon-btn {
+  background: rgba(255,255,255,.2);
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  width: 32px; height: 32px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.icon-btn:hover { background: rgba(255,255,255,.35); }
+
+/* ===== メイン ===== */
+main {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== カード ===== */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+/* ===== サマリーグリッド ===== */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 680px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+}
+.card-icon { font-size: 1.8rem; }
+.card-label { font-size: .78rem; color: var(--text-sub); margin-bottom: 2px; }
+.card-value { font-size: 1.4rem; font-weight: 700; }
+.card-value small { font-size: .7rem; font-weight: 400; color: var(--text-sub); }
+
+.intake  { border-top: 4px solid #f4a261; }
+.burn    { border-top: 4px solid #3cb371; }
+.balance { border-top: 4px solid #4f8ef7; }
+.goal    { border-top: 4px solid #a78bfa; }
+
+/* ===== 進捗 ===== */
+.progress-section {}
+.progress-header { display: flex; justify-content: space-between; font-size: .9rem; margin-bottom: 8px; font-weight: 600; }
+.progress-bar-bg { background: var(--border); border-radius: 99px; height: 14px; overflow: hidden; }
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f8ef7, #a78bfa);
+  border-radius: 99px;
+  width: 0%;
+  transition: width .4s ease;
+}
+.progress-bar-fill.over { background: linear-gradient(90deg, #f25f5c, #f4a261); }
+
+.macro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+.macro-item { display: flex; flex-direction: column; gap: 4px; }
+.macro-label { font-size: .78rem; color: var(--text-sub); }
+.macro-bar-bg { background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; }
+.macro-bar { height: 100%; border-radius: 99px; width: 0%; transition: width .4s; }
+.macro-bar.carb    { background: #f4a261; }
+.macro-bar.protein { background: #3cb371; }
+.macro-bar.fat     { background: #f25f5c; }
+.macro-item span:last-child { font-size: .8rem; font-weight: 600; }
+
+/* ===== タブ ===== */
+.tabs { display: flex; gap: 8px; }
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-sub);
+  transition: all .15s;
+}
+.tab-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.tab-content { display: none; flex-direction: column; gap: 16px; }
+.tab-content.active { display: flex; }
+
+/* ===== フォーム ===== */
+.section-title { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+.form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.form-group { display: flex; flex-direction: column; gap: 6px; min-width: 120px; flex: 1; }
+.form-group.flex-2 { flex: 2; }
+.form-group label { font-size: .8rem; color: var(--text-sub); font-weight: 600; }
+.form-group input,
+.form-group select {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: .95rem;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color .15s;
+}
+.form-group input:focus,
+.form-group select:focus { border-color: var(--primary); background: #fff; }
+.macro-inputs { margin-top: 8px; }
+
+/* ===== オートコンプリート ===== */
+.autocomplete-wrap { position: relative; }
+.suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: #fff;
+  border: 1.5px solid var(--primary);
+  border-radius: 8px;
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
+}
+.suggestions.hidden { display: none; }
+.suggestions li {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: .9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.suggestions li:hover { background: #f0f4ff; }
+.suggestions li .sug-cal { font-size: .78rem; color: var(--primary); font-weight: 700; }
+
+/* ===== ボタン ===== */
+.btn-primary {
+  padding: 10px 24px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background .15s, transform .1s;
+}
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-primary:active { transform: scale(.97); }
+.btn-secondary {
+  padding: 10px 24px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background .15s;
+}
+.btn-secondary:hover { background: var(--border); }
+
+/* ===== ログリスト ===== */
+.log-list { display: flex; flex-direction: column; gap: 8px; }
+.meal-group { display: flex; flex-direction: column; gap: 6px; }
+.meal-group-title {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  padding: 0 4px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.log-item {
+  background: var(--surface);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.log-item-icon { font-size: 1.4rem; }
+.log-item-info { flex: 1; }
+.log-item-name { font-weight: 600; font-size: .95rem; }
+.log-item-meta { font-size: .78rem; color: var(--text-sub); margin-top: 2px; }
+.log-item-cal { font-weight: 700; color: var(--primary); font-size: 1rem; white-space: nowrap; }
+.log-item-delete {
+  background: none;
+  border: none;
+  color: var(--text-sub);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color .15s, background .15s;
+}
+.log-item-delete:hover { color: var(--danger); background: #fff0f0; }
+
+.empty-state {
+  text-align: center;
+  color: var(--text-sub);
+  padding: 32px;
+  font-size: .9rem;
+}
+
+/* ===== モーダル ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.hidden { display: none; }
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 28px;
+  width: min(420px, 90vw);
+  box-shadow: 0 8px 32px rgba(0,0,0,.18);
+}
+.modal h2 { margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 4px; }
+
+/* ===== スクロールバー ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
