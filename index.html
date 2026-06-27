@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ダイエットトラッカー</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4f8ef7" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <!-- iOS Safari 用 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ダイエット" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <div class="header-inner">
+      <span class="logo">🥗 ダイエットトラッカー</span>
+      <div class="date-nav">
+        <button id="prevDay" class="icon-btn">&#8249;</button>
+        <span id="currentDateLabel"></span>
+        <button id="nextDay" class="icon-btn">&#8250;</button>
+      </div>
+      <button id="settingsBtn" class="icon-btn" title="目標設定">⚙</button>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main>
+
+    <!-- サマリーカード -->
+    <section class="summary-grid">
+      <div class="card summary-card intake">
+        <div class="card-icon">🍽️</div>
+        <div>
+          <div class="card-label">摂取カロリー</div>
+          <div class="card-value"><span id="totalIntake">0</span> <small>kcal</small></div>
+        </div>
+      </div>
+      <div class="card summary-card burn">
+        <div class="card-icon">🔥</div>
+        <div>
+          <div class="card-label">消費カロリー</div>
+          <div class="card-value"><span id="totalBurn">0</span> <small>kcal</small></div>
+        </div>
+      </div>
+      <div class="card summary-card balance">
+        <div class="card-icon">⚖️</div>
+        <div>
+          <div class="card-label">純摂取カロリー</div>
+          <div class="card-value"><span id="netCalories">0</span> <small>kcal</small></div>
+        </div>
+      </div>
+      <div class="card summary-card goal">
+        <div class="card-icon">🎯</div>
+        <div>
+          <div class="card-label">目標まで残り</div>
+          <div class="card-value"><span id="remainingCalories">0</span> <small>kcal</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 進捗バー -->
+    <section class="card progress-section">
+      <div class="progress-header">
+        <span>摂取進捗</span>
+        <span id="progressLabel">0 / 0 kcal</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="progressBar" class="progress-bar-fill"></div>
+      </div>
+      <div class="macro-grid">
+        <div class="macro-item">
+          <span class="macro-label">炭水化物</span>
+          <div class="macro-bar-bg"><div id="carbBar" class="macro-bar carb"></div></div>
+          <span id="carbVal">0g</span>
+        </div>
+        <div class="macro-item">
+          <span class="macro-label">タンパク質</span>
+          <div class="macro-bar-bg"><div id="proteinBar" class="macro-bar protein"></div></div>
+          <span id="proteinVal">0g</span>
+        </div>
+        <div class="macro-item">
+          <span class="macro-label">脂質</span>
+          <div class="macro-bar-bg"><div id="fatBar" class="macro-bar fat"></div></div>
+          <span id="fatVal">0g</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- タブ切り替え -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="food">🍽️ 食事ログ</button>
+      <button class="tab-btn" data-tab="exercise">🏃 運動ログ</button>
+    </div>
+
+    <!-- 食事タブ -->
+    <section id="tab-food" class="tab-content active">
+      <div class="card">
+        <h2 class="section-title">食事を追加</h2>
+
+        <!-- 写真から自動計算 -->
+        <div class="photo-section">
+          <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none" />
+          <button class="btn-photo" id="photoBtn" type="button">📷 写真から自動計算</button>
+          <div id="photoPreviewWrap" class="hidden">
+            <div class="photo-preview-row">
+              <img id="photoPreview" alt="選択した写真" />
+              <div class="photo-preview-actions">
+                <button id="analyzeBtn" class="btn-primary btn-sm" type="button">🔍 解析する</button>
+                <button id="cancelPhotoBtn" class="btn-secondary btn-sm" type="button">キャンセル</button>
+              </div>
+            </div>
+          </div>
+          <div id="analyzeLoading" class="hidden analyze-loading">
+            <div class="loading-spinner"></div>
+            <span>AIが写真を解析中...</span>
+          </div>
+          <div id="analyzeResults" class="hidden">
+            <div class="analyze-results-header">
+              <span class="analyze-results-title">解析結果</span>
+              <span class="analyze-estimate-note">※推定値</span>
+            </div>
+            <div id="analyzeFoodList"></div>
+          </div>
+        </div>
+        <div class="section-divider">手動入力</div>
+
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label>食品名</label>
+            <div class="autocomplete-wrap">
+              <input type="text" id="foodSearch" placeholder="例: ご飯、鶏胸肉、バナナ…" autocomplete="off" />
+              <ul id="foodSuggestions" class="suggestions"></ul>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>量 (g / ml)</label>
+            <input type="number" id="foodAmount" value="100" min="1" />
+          </div>
+          <div class="form-group">
+            <label>カロリー (kcal)</label>
+            <input type="number" id="foodCalories" placeholder="自動入力" min="0" />
+          </div>
+        </div>
+        <div class="form-row macro-inputs">
+          <div class="form-group">
+            <label>炭水化物 (g)</label>
+            <input type="number" id="foodCarb" placeholder="0" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label>タンパク質 (g)</label>
+            <input type="number" id="foodProtein" placeholder="0" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label>脂質 (g)</label>
+            <input type="number" id="foodFat" placeholder="0" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label>食事区分</label>
+            <select id="mealType">
+              <option value="朝食">朝食</option>
+              <option value="昼食" selected>昼食</option>
+              <option value="夕食">夕食</option>
+              <option value="間食">間食</option>
+            </select>
+          </div>
+        </div>
+        <button id="addFoodBtn" class="btn-primary">追加する</button>
+      </div>
+
+      <!-- 食事ログ一覧 -->
+      <div id="foodLog" class="log-list"></div>
+    </section>
+
+    <!-- 運動タブ -->
+    <section id="tab-exercise" class="tab-content">
+      <div class="card">
+        <h2 class="section-title">運動を追加</h2>
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label>運動名</label>
+            <div class="autocomplete-wrap">
+              <input type="text" id="exerciseSearch" placeholder="例: ウォーキング、ランニング、水泳…" autocomplete="off" />
+              <ul id="exerciseSuggestions" class="suggestions"></ul>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>時間 (分)</label>
+            <input type="number" id="exerciseDuration" value="30" min="1" />
+          </div>
+          <div class="form-group">
+            <label>消費カロリー (kcal)</label>
+            <input type="number" id="exerciseCalories" placeholder="自動計算" min="0" />
+          </div>
+        </div>
+        <div class="form-group" style="max-width:220px">
+          <label>体重 (kg) ※消費カロリー計算用</label>
+          <input type="number" id="bodyWeight" placeholder="例: 65" min="1" step="0.1" />
+        </div>
+        <button id="addExerciseBtn" class="btn-primary">追加する</button>
+      </div>
+
+      <!-- 運動ログ一覧 -->
+      <div id="exerciseLog" class="log-list"></div>
+    </section>
+
+  </main>
+
+  <!-- 目標設定モーダル -->
+  <div id="settingsModal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>目標カロリー設定</h2>
+      <div class="form-group">
+        <label>1日の目標摂取カロリー (kcal)</label>
+        <input type="number" id="goalInput" value="2000" min="500" max="5000" />
+      </div>
+      <div class="form-group">
+        <label>体重 (kg)</label>
+        <input type="number" id="weightInput" value="65" min="1" step="0.1" />
+      </div>
+      <div class="form-group">
+        <label>Anthropic APIキー <span class="label-optional">（写真解析機能）</span></label>
+        <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off" />
+        <div class="input-hint">APIキーは端末内のみに保存されます。<a href="https://console.anthropic.com/" target="_blank" rel="noopener">取得する →</a></div>
+      </div>
+      <div class="modal-actions">
+        <button id="saveSettings" class="btn-primary">保存</button>
+        <button id="closeSettings" class="btn-secondary">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="foods.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
